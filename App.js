@@ -5,12 +5,26 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-console.log(SCREEN_WIDTH);
+
 export default function App() {
-  const [location, setLocation] = useState();
+  const [city, setCity] = useState("Loading...");
+  const [location, setLocation] = useState(null);
   const [ok, setOk] = useState(true);
   const ask = async () => {
-    await Location.requestPermissionsAsync();
+    const { granted } = await Location.requestForegroundPermissionsAsync();
+    // console.log(permission); // granted:true-> 허락받음
+    if (!granted) {
+      setOk(false);
+    }
+    const {
+      coords: { latitude, longitude },
+    } = await Location.getCurrentPositionAsync({ accuracy: 5 });
+    // console.log(location);
+    const location = await Location.reverseGeocodeAsync(
+      { latitude, longitude },
+      { useGoogleMaps: false }
+    );
+    setCity(location[0].city);
   };
   useEffect(() => {
     ask();
@@ -18,7 +32,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.city}>
-        <Text style={styles.cityName}>Suwon</Text>
+        <Text style={styles.cityName}>{city}</Text>
       </View>
       <ScrollView
         horizontal
