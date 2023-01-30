@@ -1,5 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Fontisto } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -13,6 +16,16 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const API_KEY = "2d9ebcd9cdf9b6b9a007f04426ef4ccb";
+
+const icons = {
+  Clear: "day-sunny",
+  Clouds: "cloudy",
+  Atmosphere: "fog",
+  Snow: "snows",
+  Rain: "umprella",
+  Drizzle: "rain",
+  Thunderstorm: "lightning",
+};
 
 export default function App() {
   const [city, setCity] = useState("Loading...");
@@ -56,7 +69,10 @@ export default function App() {
     getWeather();
   }, []);
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#d3e1ed", "#88aac6", "#005AA7"]}
+      style={styles.container}
+    >
       <View style={styles.city}>
         <Text style={styles.cityName}>{city}</Text>
       </View>
@@ -75,52 +91,77 @@ export default function App() {
           days.map((day, index) => (
             <View key={index} style={styles.day}>
               <Text style={styles.daily}>{day.dt_txt.substr(5, 5)}</Text>
-              <Text style={styles.temp}>
-                {parseFloat(day.main.temp).toFixed(1)}°C
-              </Text>
+
+              <View>
+                <Fontisto
+                  name={icons[day.weather[0].main]}
+                  size={130}
+                  color="white"
+                />
+              </View>
+              <View>
+                <Text style={styles.temp}>
+                  {parseFloat(day.main.temp).toFixed(1)}°C
+                </Text>
+              </View>
+
               <Text style={styles.descript}>{day.weather[0].main}</Text>
               <Text style={styles.tinydes}>{day.weather[0].description}</Text>
             </View>
           ))
         )}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "pink",
   },
+
   city: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    borderBottomWidth: 2,
+    borderStyle: "solid",
+    borderColor: "white",
   },
   cityName: {
     fontSize: 48,
     fontWeight: "500",
+    color: "white",
   },
-  weather: {},
+  weather: {
+    marginTop: 60,
+  },
   day: {
     //day 하나당 화면 하나에 채우고 싶어서 dementions api 사용함. 변수화해서 가져옴
     width: SCREEN_WIDTH,
     alignItems: "center",
+    paddingTop: 10,
+    color: "white",
   },
   daily: {
-    marginTop: 10,
-    fontSize: 60,
+    marginBottom: 50,
+    fontSize: 30,
+    color: "white",
   },
   temp: {
-    fontSize: 100,
+    marginTop: -10,
+    marginBottom: 30,
+    fontSize: 55,
+    color: "white",
   },
   descript: {
-    marginTop: 0,
-    fontSize: 60,
+    marginTop: 10,
+    fontSize: 35,
+    color: "white",
   },
   tinydes: {
     marginTop: 10,
-    fontSize: 30,
+    fontSize: 20,
+    color: "white",
   },
 });
